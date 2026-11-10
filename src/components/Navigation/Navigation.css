@@ -1,0 +1,25 @@
+.navigation {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.navigation__link {
+  font-size: 14px;
+  transition: color 0.2s ease;
+}
+
+.navigation__link:hover,
+.navigation__link.active {
+  color: #ff6534;
+}
+
+@media (max-width: 480px) {
+  .navigation {
+    gap: 12px;
+  }
+
+  .navigation__link {
+    font-size: 12px;
+  }
+}

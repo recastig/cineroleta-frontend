@@ -1,0 +1,43 @@
+.main {
+  display: flex;
+  justify-content: center;
+  padding: 120px 24px;
+}
+
+.main__hero {
+  max-width: 850px;
+  text-align: center;
+}
+
+.main__subtitle {
+  color: #e8b64d;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.main__title {
+  font-size: clamp(42px, 8vw, 96px);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+  margin: 24px 0;
+}
+
+.main__description {
+  max-width: 500px;
+  margin: 0 auto 32px;
+  color: #aaa;
+  line-height: 1.6;
+  font-size: 18px;
+}
+
+.main__button {
+  padding: 16px 32px;
+  background: #ff6534;
+  color: #171717;
+  border: 0;
+  border-radius: 8px;
+  font-weight: 700;
+  opacity: 0.6;
+  cursor: not-allowed;
+}

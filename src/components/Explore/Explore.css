@@ -1,0 +1,15 @@
+.explore {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+.explore__title {
+  font-size: clamp(32px, 5vw, 56px);
+  margin: 0 0 16px;
+}
+
+.explore__description {
+  color: #aaa;
+  line-height: 1.6;
+}
