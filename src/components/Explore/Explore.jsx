@@ -1,5 +1,8 @@
 import { useState } from "react";
 import SearchForm from "../SearchForm/SearchForm";
+import MovieCardList from "../MovieCardList/MovieCardList";
+import NothingFound from "../NothingFound/NothingFound";
+import mockMovies from "../../utils/mockMovies";
 import "./Explore.css";
 
 function Explore() {
@@ -9,16 +12,29 @@ function Explore() {
     setSearchQuery(query);
   }
 
+  const normalizedQuery = searchQuery
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
+  const filteredMovies = mockMovies.filter((movie) =>
+    movie.title
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .includes(normalizedQuery)
+  );
+
   return (
     <main className="explore">
       <section className="explore__hero">
         <h1 className="explore__title">
-          BUSCA DE FILMES
+          BUSCA POR FILMES
           <span className="explore__dot">.</span>
         </h1>
 
         <p className="explore__description">
-          Já sabe o que assistir? Pesquise por aqui!
+          Já recebeu indicação? Pesquise aqui sobre o filme!
         </p>
 
         <SearchForm onSearch={handleSearch} />
@@ -28,16 +44,23 @@ function Explore() {
         className="explore__results"
         aria-live="polite"
       >
-        {searchQuery ? (
-          <p className="explore__status">
-            Busca por "{searchQuery}" preparada.
-            Os resultados serão exibidos aqui
-            após a integração com a API.
-          </p>
-        ) : (
+        {!searchQuery ? (
           <p className="explore__status">
             Pesquise um filme para começar.
           </p>
+        ) : filteredMovies.length === 0 ? (
+          <NothingFound />
+        ) : (
+          <>
+            <h2 className="explore__results-title">
+              RESULTADOS PARA "{searchQuery}"
+            </h2>
+
+            <MovieCardList
+              key={searchQuery}
+              movies={filteredMovies}
+            />
+          </>
         )}
       </section>
     </main>
