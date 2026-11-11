@@ -3,23 +3,49 @@ import "./Main.css";
 function Main() {
   return (
     <main className="main">
-      <section className="main__hero">
-        <p className="main__subtitle">
-          O cinema decide por você
-        </p>
+      <section className="hero">
+        <div className="hero__content">
+          <h1 className="hero__title">
+            <span className="hero__title-line">GIRE E</span>
+            <span className="hero__title-line">ASSISTA,</span>
+            <span className="hero__title-line hero__title-italic">
+              SIMPLES
+            </span>
+            <span className="hero__title-line hero__title-last">
+              <span className="hero__title-italic">
+                ASSIM
+              </span>
+              <span className="hero__smile" aria-hidden="true">
+                ☺
+              </span>
+            </span>
+          </h1>
 
-        <h1 className="main__title">
-          Menos procura. Mais cinema.
-        </h1>
+          <p className="hero__description">
+            <span className="hero__description-line">
+              Uma roleta, milhares de filmes.
+            </span>
+            <span className="hero__description-line">
+              Deixe a sorte decidir o que você vai assistir hoje!
+            </span>
+          </p>
 
-        <p className="main__description">
-          Não sabe o que assistir hoje?
-          Deixe a sorte escolher seu próximo filme.
-        </p>
+          <button
+            className="hero__button"
+            type="button"
+            disabled
+          >
+            GIRAR AGORA ↻
+          </button>
+        </div>
 
-        <button className="main__button" type="button" disabled>
-          Em breve: girar a roleta
-        </button>
+        <div className="hero__visual">
+          <img
+            className="hero__image"
+            src="/hero-statue.png"
+            alt="Estátua clássica usando óculos 3D e envolvida por uma fita cinematográfica"
+          />
+        </div>
       </section>
     </main>
   );
