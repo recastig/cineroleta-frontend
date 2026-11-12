@@ -1,53 +1,105 @@
 import { useEffect, useRef, useState } from "react";
-import mockMovies from "../../utils/mockMovies";
+import { getMovieGenres, discoverMovies } from "../../utils/TmdbApi";
 import "./Roulette.css";
 
 const SPIN_DURATION = 4200;
-
-// Notas demonstrativas para testar os filtros.
-// Ainda não são avaliações reais do IMDb.
-const DEMO_RATINGS = {
-  1: 8.5,
-  2: 6.5,
-  3: 8.5,
-  4: 8.5,
-  5: 7.5,
-  6: 8.0,
-  7: 7.5,
-  8: 8.0,
-  9: 8.0,
-};
-
-const movies = mockMovies.map((movie) => ({
-  ...movie,
-  demoRating: DEMO_RATINGS[movie.id] ?? 0,
-}));
-
-const genres = [
-  ...new Set(movies.map((movie) => movie.genre)),
-].sort((a, b) => a.localeCompare(b, "pt-BR"));
+const MAX_DISCOVER_PAGE = 500;
 
 function Roulette({ onClose }) {
+  const [genres, setGenres] = useState([]);
   const [genre, setGenre] = useState("all");
   const [minRating, setMinRating] = useState(0);
-  const [rotation, setRotation] = useState(0);
+  const [minYear, setMinYear] = useState("all");
+
+  const currentYear = new Date().getFullYear();
+
+  const availableYears = Array.from(
+    { length: currentYear - 1888 + 1 },
+    (_, index) => currentYear - index,
+  );
+
+  const [totalResults, setTotalResults] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const [isLoadingGenres, setIsLoadingGenres] = useState(true);
+
+  const [isLoadingMovies, setIsLoadingMovies] = useState(true);
+
   const [isSpinning, setIsSpinning] = useState(false);
+  const [rotation, setRotation] = useState(0);
   const [selectedMovie, setSelectedMovie] = useState(null);
+
+  const [error, setError] = useState("");
+  const [filterError, setFilterError] = useState("");
 
   const dialogRef = useRef(null);
   const closeButtonRef = useRef(null);
+  const spinControllerRef = useRef(null);
   const timerRef = useRef(null);
 
-  const filteredMovies = movies.filter((movie) => {
-    const matchesGenre =
-      genre === "all" || movie.genre === genre;
+  const availableMovies = !isLoadingMovies && !filterError && totalResults > 0;
 
-    const matchesRating =
-      movie.demoRating >= minRating;
+  const selectedGenre = genres.find((item) => String(item.id) === genre);
 
-    return matchesGenre && matchesRating;
-  });
+  // Carregar gêneros oficiais do TMDB.
+  useEffect(() => {
+    const controller = new AbortController();
 
+    getMovieGenres(controller.signal)
+      .then(setGenres)
+      .catch((err) => {
+        if (!controller.signal.aborted) {
+          setFilterError(err.message);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoadingGenres(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  // Consultar quantos filmes atendem aos filtros.
+  useEffect(() => {
+    const controller = new AbortController();
+
+    setIsLoadingMovies(true);
+    setFilterError("");
+    setTotalResults(0);
+    setTotalPages(0);
+    setSelectedMovie(null);
+    setError("");
+
+    discoverMovies({
+      genreId: genre,
+      minRating,
+      minYear,
+      page: 1,
+      signal: controller.signal,
+    })
+      .then((data) => {
+        if (controller.signal.aborted) return;
+
+        setTotalResults(data.totalResults);
+        setTotalPages(data.totalPages);
+      })
+      .catch((err) => {
+        if (!controller.signal.aborted) {
+          setFilterError(err.message);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoadingMovies(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [genre, minRating, minYear]);
+
+  // Gerenciar abertura, fechamento e foco do modal.
   useEffect(() => {
     const previousFocus = document.activeElement;
     const previousOverflow = document.body.style.overflow;
@@ -65,27 +117,19 @@ function Roulette({ onClose }) {
         return;
       }
 
-      const focusableElements = Array.from(
+      const focusable = Array.from(
         dialogRef.current.querySelectorAll(
-          "button:not(:disabled), select:not(:disabled), input:not(:disabled)"
-        )
+          "button:not(:disabled), select:not(:disabled), input:not(:disabled)",
+        ),
       );
 
-      const first = focusableElements[0];
-      const last = focusableElements[
-        focusableElements.length - 1
-      ];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
 
-      if (
-        event.shiftKey &&
-        document.activeElement === first
-      ) {
+      if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last?.focus();
-      } else if (
-        !event.shiftKey &&
-        document.activeElement === last
-      ) {
+      } else if (!event.shiftKey && document.activeElement === last) {
         event.preventDefault();
         first?.focus();
       }
@@ -94,59 +138,88 @@ function Roulette({ onClose }) {
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      spinControllerRef.current?.abort();
       clearTimeout(timerRef.current);
+
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener(
-        "keydown",
-        handleKeyDown
-      );
+      document.removeEventListener("keydown", handleKeyDown);
+
       previousFocus?.focus();
     };
   }, [onClose]);
 
   function handleGenreChange(event) {
     setGenre(event.target.value);
-    setSelectedMovie(null);
   }
 
   function handleRatingChange(event) {
     setMinRating(Number(event.target.value));
-    setSelectedMovie(null);
   }
 
-  function handleSpin() {
-    if (isSpinning || filteredMovies.length === 0) {
+  async function handleSpin() {
+    if (isSpinning || isLoadingMovies || !availableMovies) {
       return;
     }
 
-    const randomIndex = Math.floor(
-      Math.random() * filteredMovies.length
-    );
-
-    const movie = filteredMovies[randomIndex];
-
-    // A roda é decorativa: seus segmentos não
-    // representam filmes específicos.
-    // Cada filme elegível tem a mesma chance.
-    const extraRotation = 1800 + Math.random() * 360;
-
-    setSelectedMovie(null);
     setIsSpinning(true);
+    setSelectedMovie(null);
+    setError("");
 
-    setRotation((previous) => {
-      return previous + extraRotation;
-    });
+    const controller = new AbortController();
+    spinControllerRef.current = controller;
 
-    const prefersReducedMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
+    try {
+      const maxPage = Math.min(totalPages, MAX_DISCOVER_PAGE);
 
-    clearTimeout(timerRef.current);
+      const randomPage = Math.floor(Math.random() * maxPage) + 1;
 
-    timerRef.current = setTimeout(() => {
-      setSelectedMovie(movie);
-      setIsSpinning(false);
-    }, prefersReducedMotion ? 50 : SPIN_DURATION);
+      const data = await discoverMovies({
+        genreId: genre,
+        minRating,
+        minYear,
+        page: randomPage,
+        signal: controller.signal,
+      });
+
+      if (controller.signal.aborted) return;
+
+      if (data.movies.length === 0) {
+        throw new Error(
+          "Não encontramos filmes nesta rodada. Tente girar novamente.",
+        );
+      }
+
+      const randomIndex = Math.floor(Math.random() * data.movies.length);
+
+      const movie = data.movies[randomIndex];
+
+      const extraRotation = 1800 + Math.random() * 360;
+
+      const prefersReducedMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      setRotation((previous) => {
+        return previous + extraRotation;
+      });
+
+      clearTimeout(timerRef.current);
+
+      timerRef.current = setTimeout(
+        () => {
+          if (!controller.signal.aborted) {
+            setSelectedMovie(movie);
+            setIsSpinning(false);
+          }
+        },
+        prefersReducedMotion ? 50 : SPIN_DURATION,
+      );
+    } catch (err) {
+      if (!controller.signal.aborted) {
+        setError(err.message);
+        setIsSpinning(false);
+      }
+    }
   }
 
   function handleOverlayClick(event) {
@@ -156,10 +229,7 @@ function Roulette({ onClose }) {
   }
 
   return (
-    <div
-      className="roulette"
-      onMouseDown={handleOverlayClick}
-    >
+    <div className="roulette" onMouseDown={handleOverlayClick}>
       <section
         className="roulette__container"
         role="dialog"
@@ -178,28 +248,20 @@ function Roulette({ onClose }) {
         </button>
 
         <header className="roulette__header">
-          <h2
-            className="roulette__title"
-            id="roulette-title"
-          >
+          <h2 className="roulette__title" id="roulette-title">
             DEIXE A SORTE DECIDIR
-            <span className="roulette__title-dot">
-              .
-            </span>
+            <span className="roulette__title-dot">.</span>
           </h2>
 
           <p className="roulette__description">
-            Escolha seus filtros e descubra seu
-            próximo filme!
+            Escolha seus filtros e descubra seu próximo filme!
           </p>
         </header>
 
         <div className="roulette__filters">
+          {/* GÊNERO */}
           <div className="roulette__filter">
-            <label
-              className="roulette__filter-label"
-              htmlFor="roulette-genre"
-            >
+            <label className="roulette__filter-label" htmlFor="roulette-genre">
               GÊNERO
             </label>
 
@@ -208,27 +270,45 @@ function Roulette({ onClose }) {
               className="roulette__select"
               value={genre}
               onChange={handleGenreChange}
-              disabled={isSpinning}
+              disabled={isSpinning || isLoadingGenres}
             >
-              <option value="all">
-                Todos os gêneros
-              </option>
+              <option value="all">Todos os gêneros</option>
 
               {genres.map((item) => (
-                <option key={item} value={item}>
-                  {item}
+                <option key={item.id} value={String(item.id)}>
+                  {item.name}
                 </option>
               ))}
             </select>
           </div>
 
+          {/* ANO MÍNIMO */}
           <div className="roulette__filter">
-            <label
-              className="roulette__filter-label"
-              htmlFor="roulette-rating"
-            >
-              NOTA MÍNIMA
+            <label className="roulette__filter-label" htmlFor="roulette-year">
+              ANO MÍNIMO
+            </label>
 
+            <select
+              id="roulette-year"
+              className="roulette__select"
+              value={minYear}
+              onChange={(event) => setMinYear(event.target.value)}
+              disabled={isSpinning}
+            >
+              <option value="all">Qualquer ano</option>
+
+              {availableYears.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* NOTA MÍNIMA TMDB */}
+          <div className="roulette__filter">
+            <label className="roulette__filter-label" htmlFor="roulette-rating">
+              NOTA MÍNIMA TMDB
               <span className="roulette__rating-value">
                 {minRating.toFixed(1)}
               </span>
@@ -252,28 +332,20 @@ function Roulette({ onClose }) {
             </div>
           </div>
         </div>
-
-        <p
-          className="roulette__filter-count"
-          role="status"
-        >
-          {filteredMovies.length}{" "}
-          {filteredMovies.length === 1
-            ? "filme disponível para o sorteio"
-            : "filmes disponíveis para o sorteio"}
-        </p>
-
         <div className="roulette__main">
           <div className="roulette__wheel-column">
-            {filteredMovies.length > 0 ? (
+            {isLoadingMovies ? (
+              <div className="roulette__empty" role="status">
+                <p className="roulette__empty-description">
+                  Preparando sua roleta...
+                </p>
+              </div>
+            ) : availableMovies ? (
               <div
                 className="roulette__wheel-wrapper"
                 aria-label="Roleta cinematográfica decorativa"
               >
-                <span
-                  className="roulette__pointer"
-                  aria-hidden="true"
-                />
+                <span className="roulette__pointer" aria-hidden="true" />
 
                 <div
                   className="roulette__wheel"
@@ -283,22 +355,21 @@ function Roulette({ onClose }) {
                   }}
                 >
                   <div className="roulette__wheel-center">
-                    ☺
+                    <span className="roulette__smile">☺</span>
                   </div>
                 </div>
               </div>
             ) : (
-              <div
-                className="roulette__empty"
-                role="status"
-              >
+              <div className="roulette__empty" role="status">
                 <h3 className="roulette__empty-title">
-                  NENHUM FILME ENCONTRADO :(
+                  {filterError
+                    ? "ERRO AO CARREGAR"
+                    : "NENHUM FILME ENCONTRADO :("}
                 </h3>
 
                 <p className="roulette__empty-description">
-                  Experimente outro gênero ou
-                  diminua a nota mínima.
+                  {filterError ||
+                    "Experimente outro gênero ou diminua a nota mínima."}
                 </p>
               </div>
             )}
@@ -307,14 +378,9 @@ function Roulette({ onClose }) {
               className="roulette__spin-button"
               type="button"
               onClick={handleSpin}
-              disabled={
-                isSpinning ||
-                filteredMovies.length === 0
-              }
+              disabled={isSpinning || isLoadingGenres || !availableMovies}
             >
-              {isSpinning
-                ? "SORTEANDO..."
-                : "GIRAR ROLETA ↻"}
+              {isSpinning ? "SORTEANDO..." : "GIRAR ROLETA ↻"}
             </button>
           </div>
 
@@ -326,38 +392,39 @@ function Roulette({ onClose }) {
           >
             {isSpinning ? (
               <div className="roulette__result-content">
-                <span className="roulette__result-icon">
-                  ✦
-                </span>
+                <span className="roulette__result-icon">✦</span>
 
-                <p className="roulette__result-label">
-                  SORTEANDO...
-                </p>
+                <p className="roulette__result-label">VEM AÍ UM FILMAÇO...</p>
 
                 <p className="roulette__result-placeholder">
-                  A sorte está escolhendo
-                  seu próximo filme!
+                  Já botou as pipocas pra estourar?
                 </p>
+              </div>
+            ) : error ? (
+              <div className="roulette__result-content">
+                <p className="roulette__result-label">
+                  NÃO FOI POSSÍVEL SORTEAR
+                </p>
+
+                <p className="roulette__result-description">{error}</p>
               </div>
             ) : selectedMovie ? (
               <div className="roulette__result-content">
-                <p className="roulette__result-label">
-                  SEU PRÓXIMO FILME É
-                </p>
+                <p className="roulette__result-label">SEU PRÓXIMO FILME É</p>
 
                 <h3 className="roulette__result-title">
                   {selectedMovie.title}
                 </h3>
 
                 <p className="roulette__result-meta">
-                  {selectedMovie.year} •{" "}
-                  {selectedMovie.genre}
+                  {selectedMovie.year}
+                  {selectedGenre ? ` • ${selectedGenre.name}` : ""}
                 </p>
 
                 <p className="roulette__result-rating">
-                  ★ {selectedMovie.demoRating.toFixed(1)}
+                  ★ {selectedMovie.rating.toFixed(1)}
                   /10
-                  <span> (nota demonstrativa)</span>
+                  <span> (TMDB)</span>
                 </p>
 
                 <p className="roulette__result-description">
@@ -370,22 +437,14 @@ function Roulette({ onClose }) {
               </div>
             ) : (
               <div className="roulette__result-content">
-                <span className="roulette__result-icon">
-                  ✦
-                </span>
-
-                <p className="roulette__result-label">
-                  SEU PRÓXIMO FILME
-                </p>
 
                 <h3 className="roulette__result-placeholder">
-                  UMA NOVA HISTÓRIA
-                  ESTÁ TE ESPERANDO.
+                  RODA, RODA, RODA E AVISA 💫
                 </h3>
 
                 <p className="roulette__result-description">
-                  Ajuste os filtros e gire a roleta
-                  para descobrir o que assistir.
+                  Ajuste os filtros e gire a roleta para descobrir o que
+                  assistir!
                 </p>
               </div>
             )}
@@ -393,8 +452,8 @@ function Roulette({ onClose }) {
         </div>
 
         <p className="roulette__disclaimer">
-          A roleta escolhe aleatoriamente entre todos
-          os filmes que correspondem aos filtros.
+          O sorteio utiliza uma página aleatória de filmes que correspondem aos
+          filtros selecionados no TMDB.
         </p>
       </section>
     </div>

@@ -82,7 +82,7 @@
 
 .roulette__filters {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 24px;
 
   width: 100%;
@@ -161,23 +161,26 @@
 
 /* ÁREA PRINCIPAL */
 
+
 .roulette__main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.85fr);
-  align-items: center;
+  grid-template-columns: minmax(0, 0.60fr) minmax(0, 1fr);
+  align-items: start;
   gap: 32px;
 
   width: 100%;
 }
 
+
 .roulette__wheel-column {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 18px;
 
   min-width: 0;
+  padding-top: 12px;
 }
 
 /* RODA */
@@ -259,9 +262,16 @@
   color: var(--color-yellow);
 
   font-size: 48px;
+  font-weight: 400;
   line-height: 1;
 
   transform: translate(-50%, -50%);
+}
+
+/* AJUSTE ÓPTICO DO SMILE */
+
+.roulette__wheel-center::first-letter {
+  vertical-align: middle;
 }
 
 /* BOTÃO */
@@ -294,17 +304,19 @@
 
 /* RESULTADO */
 
+
 .roulette__result {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
 
   min-width: 0;
   min-height: 340px;
-  padding: 30px 28px;
+  padding: 20px 28px 30px;
 
   border: 1px solid var(--color-line);
   background: rgba(20, 0, 8, 0.16);
+  align-self: start;
 }
 
 .roulette__result-content {
@@ -537,5 +549,35 @@
 @media (prefers-reduced-motion: reduce) {
   .roulette__wheel {
     transition-duration: 0.01ms;
+  }
+}
+
+.roulette__smile {
+  display: block;
+  line-height: 1;
+  transform: translateY(-3px);
+}
+
+/* FILTROS EM TELAS INTERMEDIÁRIAS */
+
+@media (min-width: 601px) and (max-width: 850px) {
+  .roulette__filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .roulette__filter:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+/* FILTROS NO CELULAR */
+
+@media (max-width: 600px) {
+  .roulette__filters {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roulette__filter:last-child {
+    grid-column: auto;
   }
 }
