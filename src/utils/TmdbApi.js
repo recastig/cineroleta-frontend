@@ -3,14 +3,17 @@ const IMAGE_URL = "https://image.tmdb.org/t/p/w500";
 
 const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
-function checkResponse(response) {
+async function checkResponse(response) {
+  const data = await response.json();
+
   if (!response.ok) {
     throw new Error(
+      data.status_message ||
       `Não foi possível carregar os filmes. Erro ${response.status}.`
     );
   }
 
-  return response.json();
+  return data;
 }
 
 function normalizeMovie(movie) {
@@ -30,10 +33,14 @@ function normalizeMovie(movie) {
   };
 }
 
-export function searchMovies(query, signal) {
+export async function searchMovies(
+  query,
+  page = 1,
+  signal
+) {
   if (!API_KEY) {
-    return Promise.reject(
-      new Error("Configure a chave da API TMDB no .env.local.")
+    throw new Error(
+      "Configure a chave da API TMDB no .env.local."
     );
   }
 
@@ -42,13 +49,20 @@ export function searchMovies(query, signal) {
     query,
     language: "pt-BR",
     include_adult: "false",
-    page: "1",
+    page: String(page),
   });
 
-  return fetch(
+  const response = await fetch(
     `${API_URL}/search/movie?${params.toString()}`,
     { signal }
-  )
-    .then(checkResponse)
-    .then((data) => data.results.map(normalizeMovie));
+  );
+
+  const data = await checkResponse(response);
+
+  return {
+    movies: data.results.map(normalizeMovie),
+    page: data.page,
+    totalPages: data.total_pages,
+    totalResults: data.total_results,
+  };
 }

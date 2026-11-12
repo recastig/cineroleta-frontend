@@ -1,36 +1,30 @@
-import { useState } from "react";
 import MovieCard from "../MovieCard/MovieCard";
 import "./MovieCardList.css";
 
-const MOVIES_PER_PAGE = 3;
-
-function MovieCardList({ movies }) {
-  const [visibleCount, setVisibleCount] = useState(MOVIES_PER_PAGE);
-
-  const visibleMovies = movies.slice(0, visibleCount);
-  const hasMoreMovies = visibleCount < movies.length;
-
-  function handleShowMore() {
-    setVisibleCount((previousCount) =>
-      previousCount + MOVIES_PER_PAGE
-    );
-  }
-
+function MovieCardList({
+  movies,
+  hasMore,
+  isLoadingMore,
+  onShowMore,
+}) {
   return (
     <div className="movie-card-list">
       <div className="movie-card-list__grid">
-        {visibleMovies.map((movie) => (
+        {movies.map((movie) => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
       </div>
 
-      {hasMoreMovies && (
+      {hasMore && (
         <button
           className="movie-card-list__button"
           type="button"
-          onClick={handleShowMore}
+          onClick={onShowMore}
+          disabled={isLoadingMore}
         >
-          MOSTRAR MAIS ↓
+          {isLoadingMore
+            ? "CARREGANDO..."
+            : "MOSTRAR MAIS ↓"}
         </button>
       )}
     </div>
