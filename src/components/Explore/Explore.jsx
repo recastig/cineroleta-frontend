@@ -1,29 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchForm from "../SearchForm/SearchForm";
 import MovieCardList from "../MovieCardList/MovieCardList";
 import NothingFound from "../NothingFound/NothingFound";
-import mockMovies from "../../utils/mockMovies";
+import Preloader from "../Preloader/Preloader";
+import { searchMovies } from "../../utils/TmdbApi";
 import "./Explore.css";
 
 function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   function handleSearch(query) {
     setSearchQuery(query);
+    setIsLoading(true);
+    setError("");
+    setMovies([]);
   }
 
-  const normalizedQuery = searchQuery
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+  useEffect(() => {
+    if (!searchQuery) {
+      return;
+    }
 
-  const filteredMovies = mockMovies.filter((movie) =>
-    movie.title
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLowerCase()
-      .includes(normalizedQuery)
-  );
+    const controller = new AbortController();
+
+    searchMovies(searchQuery, controller.signal)
+      .then((results) => {
+        if (!controller.signal.aborted) {
+          setMovies(results);
+        }
+      })
+      .catch((err) => {
+        if (!controller.signal.aborted) {
+          setError(err.message);
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [searchQuery]);
 
   return (
     <main className="explore">
@@ -44,11 +65,17 @@ function Explore() {
         className="explore__results"
         aria-live="polite"
       >
-        {!searchQuery ? (
+        {isLoading ? (
+          <Preloader />
+        ) : error ? (
+          <p className="explore__status" role="alert">
+            {error}
+          </p>
+        ) : !searchQuery ? (
           <p className="explore__status">
             Pesquise um filme para começar.
           </p>
-        ) : filteredMovies.length === 0 ? (
+        ) : movies.length === 0 ? (
           <NothingFound />
         ) : (
           <>
@@ -58,7 +85,7 @@ function Explore() {
 
             <MovieCardList
               key={searchQuery}
-              movies={filteredMovies}
+              movies={movies}
             />
           </>
         )}

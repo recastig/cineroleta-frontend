@@ -3,20 +3,31 @@ import "./MovieCard.css";
 function MovieCard({ movie }) {
   return (
     <article className="movie-card">
-      <div className={`movie-card__poster movie-card__poster--${movie.theme}`}>
-        <span className="movie-card__poster-label">
-          CINEROLETA
-        </span>
-
-        <span className="movie-card__poster-title">
-          {movie.title}
-        </span>
+      <div className="movie-card__poster">
+        {movie.posterUrl ? (
+          <img
+            className="movie-card__image"
+            src={movie.posterUrl}
+            alt={`Pôster de ${movie.title}`}
+            loading="lazy"
+          />
+        ) : (
+          <div className="movie-card__no-poster">
+            <span>CINEROLETA</span>
+            <strong>{movie.title}</strong>
+          </div>
+        )}
       </div>
 
       <div className="movie-card__content">
         <div className="movie-card__metadata">
           <span>{movie.year}</span>
-          <span>{movie.genre}</span>
+
+          {typeof movie.rating === "number" && (
+            <span>
+              ★ {movie.rating.toFixed(1)}/10 TMDB
+            </span>
+          )}
         </div>
 
         <h3 className="movie-card__title">
