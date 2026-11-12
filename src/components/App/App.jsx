@@ -4,6 +4,7 @@ import Header from "../Header/Header";
 import Main from "../Main/Main";
 import Explore from "../Explore/Explore";
 import Footer from "../Footer/Footer";
+import About from "../About/About";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import "./App.css";
 
@@ -33,6 +34,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/explore" element={<Explore />} />
+          <Route path="/about" element={<About />} />
         </Routes>
       </div>
 
