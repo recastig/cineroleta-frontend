@@ -1,0 +1,134 @@
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  height: 100%;
+}
+
+.movie-card__poster {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  padding: 24px;
+
+  background-color: #bd6178;
+  color: var(--color-cream);
+}
+
+.movie-card__poster--rose {
+  background-color: #bd6178;
+  color: #590019;
+}
+
+.movie-card__poster--yellow {
+  background-color: #ffce26;
+  color: #590019;
+}
+
+.movie-card__poster--dark {
+  background-color: #310015;
+  color: var(--color-cream);
+}
+
+.movie-card__poster--cream {
+  background-color: #f8ecda;
+  color: #590019;
+}
+
+.movie-card__poster-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+}
+
+.movie-card__poster-title {
+  overflow-wrap: anywhere;
+  font-size: clamp(24px, 3vw, 48px);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+}
+
+.movie-card__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px 0 0;
+}
+
+.movie-card__metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: var(--color-pink-hover);
+  font-size: 13px;
+}
+
+.movie-card__title {
+  margin: 14px 0 12px;
+  color: var(--color-cream);
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.movie-card__description {
+  margin: 0;
+  color: var(--color-cream);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .movie-card__poster {
+    padding: 20px;
+  }
+
+  .movie-card__title {
+    font-size: 22px;
+  }
+}
+
+/* PÔSTERES DA API */
+
+.movie-card__poster {
+  position: relative;
+  overflow: hidden;
+  padding: 0;
+}
+
+.movie-card__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie-card__no-poster {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  background: var(--color-pink);
+  color: var(--color-cream);
+}
+
+.movie-card__no-poster span {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.movie-card__no-poster strong {
+  font-size: clamp(24px, 3vw, 42px);
+  line-height: 1;
+  overflow-wrap: anywhere;
+}
