@@ -17,8 +17,8 @@
 .hero {
   display: grid;
   grid-template-columns:
-    minmax(0, 0.30fr)
-    minmax(0, 0.70fr);
+    minmax(0, 0.32fr)
+    minmax(0, 0.68fr);
 
   align-items: center;
   column-gap: clamp(8px, 1.2vw, 24px);
