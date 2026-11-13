@@ -65,13 +65,6 @@ function Roulette({ onClose }) {
   useEffect(() => {
     const controller = new AbortController();
 
-    setIsLoadingMovies(true);
-    setFilterError("");
-    setTotalResults(0);
-    setTotalPages(0);
-    setSelectedMovie(null);
-    setError("");
-
     discoverMovies({
       genreId: genre,
       minRating,
@@ -148,11 +141,28 @@ function Roulette({ onClose }) {
     };
   }, [onClose]);
 
+  // Reiniciar os resultados quando os filtros mudarem.
+  function resetMovieSearch() {
+    setIsLoadingMovies(true);
+    setFilterError("");
+    setTotalResults(0);
+    setTotalPages(0);
+    setSelectedMovie(null);
+    setError("");
+  }
+
   function handleGenreChange(event) {
+    resetMovieSearch();
     setGenre(event.target.value);
   }
 
+  function handleYearChange(event) {
+    resetMovieSearch();
+    setMinYear(event.target.value);
+  }
+
   function handleRatingChange(event) {
+    resetMovieSearch();
     setMinRating(Number(event.target.value));
   }
 
@@ -292,7 +302,7 @@ function Roulette({ onClose }) {
               id="roulette-year"
               className="roulette__select"
               value={minYear}
-              onChange={(event) => setMinYear(event.target.value)}
+              onChange={handleYearChange}
               disabled={isSpinning}
             >
               <option value="all">Qualquer ano</option>
