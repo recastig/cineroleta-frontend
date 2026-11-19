@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import Header from "../Header/Header";
 import Main from "../Main/Main";
@@ -9,9 +9,48 @@ import ModalWithForm from "../ModalWithForm/ModalWithForm";
 import { signup, signin, getCurrentUser } from "../../utils/AuthApi";
 import "./App.css";
 
+const TOKEN_KEY = "cineroleta_token";
+
 function App() {
   const [authModal, setAuthModal] = useState(null);
-  const [, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const [isSessionLoading, setIsSessionLoading] = useState(() =>
+    Boolean(localStorage.getItem(TOKEN_KEY)),
+  );
+
+  useEffect(() => {
+    let isActive = true;
+    const token = localStorage.getItem(TOKEN_KEY);
+
+    if (!token) {
+      return () => {
+        isActive = false;
+      };
+    }
+
+    getCurrentUser(token)
+      .then((user) => {
+        if (isActive) {
+          setCurrentUser(user);
+        }
+      })
+      .catch(() => {
+        if (isActive) {
+          localStorage.removeItem(TOKEN_KEY);
+          setCurrentUser(null);
+        }
+      })
+      .finally(() => {
+        if (isActive) {
+          setIsSessionLoading(false);
+        }
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   function handleOpenLogin() {
     setAuthModal("login");
@@ -22,6 +61,12 @@ function App() {
   }
 
   function handleCloseModal() {
+    setAuthModal(null);
+  }
+
+  function handleSignOut() {
+    localStorage.removeItem(TOKEN_KEY);
+    setCurrentUser(null);
     setAuthModal(null);
   }
 
@@ -38,8 +83,9 @@ function App() {
 
     const user = await getCurrentUser(loginResponse.token);
 
-    localStorage.setItem("cineroleta_token", loginResponse.token);
+    localStorage.setItem(TOKEN_KEY, loginResponse.token);
     setCurrentUser(user);
+    setIsSessionLoading(false);
     handleCloseModal();
   }
 
@@ -48,6 +94,10 @@ function App() {
       <Header
         onLoginClick={handleOpenLogin}
         onRegisterClick={handleOpenRegister}
+        currentUser={currentUser}
+        isLoggedIn={Boolean(currentUser)}
+        isSessionLoading={isSessionLoading}
+        onSignOut={handleSignOut}
       />
 
       <div className="app__content">
@@ -66,9 +116,7 @@ function App() {
           mode={authModal}
           onClose={handleCloseModal}
           onSwitchMode={
-            authModal === "login"
-              ? handleOpenRegister
-              : handleOpenLogin
+            authModal === "login" ? handleOpenRegister : handleOpenLogin
           }
           onSubmit={handleAuthSubmit}
         />
