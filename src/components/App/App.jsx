@@ -6,10 +6,12 @@ import Explore from "../Explore/Explore";
 import Footer from "../Footer/Footer";
 import About from "../About/About";
 import ModalWithForm from "../ModalWithForm/ModalWithForm";
+import { signup, signin, getCurrentUser } from "../../utils/AuthApi";
 import "./App.css";
 
 function App() {
   const [authModal, setAuthModal] = useState(null);
+  const [, setCurrentUser] = useState(null);
 
   function handleOpenLogin() {
     setAuthModal("login");
@@ -21,6 +23,24 @@ function App() {
 
   function handleCloseModal() {
     setAuthModal(null);
+  }
+
+  async function handleAuthSubmit({ name, email, password }) {
+    if (authModal === "register") {
+      await signup({ name, email, password });
+    }
+
+    const loginResponse = await signin({ email, password });
+
+    if (!loginResponse.token) {
+      throw new Error("O servidor não retornou um token de autenticação.");
+    }
+
+    const user = await getCurrentUser(loginResponse.token);
+
+    localStorage.setItem("cineroleta_token", loginResponse.token);
+    setCurrentUser(user);
+    handleCloseModal();
   }
 
   return (
@@ -50,6 +70,7 @@ function App() {
               ? handleOpenRegister
               : handleOpenLogin
           }
+          onSubmit={handleAuthSubmit}
         />
       )}
     </div>
