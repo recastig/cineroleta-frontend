@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import "./ModalWithForm.css";
 
-function ModalWithForm({ mode, onClose, onSwitchMode }) {
+function ModalWithForm({ mode, onClose, onSwitchMode, onSubmit }) {
   const isLogin = mode === "login";
   const title = isLogin ? "Entrar" : "Cadastro";
 
@@ -12,6 +12,7 @@ function ModalWithForm({ mode, onClose, onSwitchMode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const previousFocus = document.activeElement;
@@ -63,12 +64,27 @@ function ModalWithForm({ mode, onClose, onSwitchMode }) {
     }
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
-    setMessage(
-      "Formulário validado! A autenticação estará disponível após a integração com o backend."
-    );
+    if (isSubmitting) {
+      return;
+    }
+
+    setMessage("");
+    setIsSubmitting(true);
+
+    try {
+      await onSubmit({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      });
+    } catch (error) {
+      setMessage(error.message || "Não foi possível realizar a operação.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -124,6 +140,7 @@ function ModalWithForm({ mode, onClose, onSwitchMode }) {
                   setName(event.target.value)
                 }
                 minLength={2}
+                maxLength={100}
                 required
               />
             </label>
@@ -165,7 +182,7 @@ function ModalWithForm({ mode, onClose, onSwitchMode }) {
               onChange={(event) =>
                 setPassword(event.target.value)
               }
-              minLength={6}
+              minLength={isLogin ? undefined : 8}
               required
             />
           </label>
@@ -173,12 +190,17 @@ function ModalWithForm({ mode, onClose, onSwitchMode }) {
           <button
             className="modal__submit"
             type="submit"
+            disabled={isSubmitting}
           >
-            {isLogin ? "ENTRAR" : "CADASTRAR"}
+            {isSubmitting
+              ? "AGUARDE..."
+              : isLogin
+                ? "ENTRAR"
+                : "CADASTRAR"}
           </button>
 
           {message && (
-            <p className="modal__message" role="status">
+            <p className="modal__message" role="alert">
               {message}
             </p>
           )}

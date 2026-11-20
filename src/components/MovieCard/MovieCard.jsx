@@ -1,6 +1,19 @@
 import "./MovieCard.css";
 
-function MovieCard({ movie }) {
+function MovieCard({
+  movie,
+  isFavorite = false,
+  isFavoriteLoading = false,
+  onFavoriteClick,
+}) {
+  function handleFavoriteClick() {
+    if (isFavoriteLoading || !onFavoriteClick) {
+      return;
+    }
+
+    onFavoriteClick(movie);
+  }
+
   return (
     <article className="movie-card">
       <div className="movie-card__poster">
@@ -16,6 +29,25 @@ function MovieCard({ movie }) {
             <span>CINEROLETA</span>
             <strong>{movie.title}</strong>
           </div>
+        )}
+
+        {onFavoriteClick && (
+          <button
+            className={`movie-card__favorite ${
+              isFavorite ? "movie-card__favorite_active" : ""
+            }`}
+            type="button"
+            onClick={handleFavoriteClick}
+            disabled={isFavoriteLoading}
+            aria-label={
+              isFavorite
+                ? `Remover ${movie.title} dos favoritos`
+                : `Adicionar ${movie.title} aos favoritos`
+            }
+            aria-pressed={isFavorite}
+          >
+            {isFavorite ? "♥" : "♡"}
+          </button>
         )}
       </div>
 

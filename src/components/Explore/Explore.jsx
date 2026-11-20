@@ -8,16 +8,20 @@ import "./Explore.css";
 
 const MOVIES_PER_CLICK = 3;
 
-function Explore() {
+function Explore({
+  favoriteIds = [],
+  favoriteLoadingIds = [],
+  favoritesError = "",
+  isFavoritesLoading = false,
+  onFavoriteClick,
+}) {
   const [search, setSearch] = useState({
     query: "",
     id: 0,
   });
 
   const [movies, setMovies] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(
-    MOVIES_PER_CLICK
-  );
+  const [visibleCount, setVisibleCount] = useState(MOVIES_PER_CLICK);
 
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -99,8 +103,7 @@ function Explore() {
 
     setPaginationError("");
 
-    const nextVisibleCount =
-      visibleCount + MOVIES_PER_CLICK;
+    const nextVisibleCount = visibleCount + MOVIES_PER_CLICK;
 
     // Ainda existem filmes carregados na memória.
     if (nextVisibleCount <= movies.length) {
@@ -124,7 +127,7 @@ function Explore() {
       const data = await searchMovies(
         searchQuery,
         currentPage + 1,
-        controller.signal
+        controller.signal,
       );
 
       if (
@@ -135,12 +138,10 @@ function Explore() {
       }
 
       setMovies((previousMovies) => {
-        const existingIds = new Set(
-          previousMovies.map((movie) => movie.id)
-        );
+        const existingIds = new Set(previousMovies.map((movie) => movie.id));
 
         const newMovies = data.movies.filter(
-          (movie) => !existingIds.has(movie.id)
+          (movie) => !existingIds.has(movie.id),
         );
 
         return [...previousMovies, ...newMovies];
@@ -157,9 +158,7 @@ function Explore() {
         setPaginationError(err.message);
       }
     } finally {
-      if (
-        requestVersion === searchVersionRef.current
-      ) {
+      if (requestVersion === searchVersionRef.current) {
         setIsLoadingMore(false);
         paginationControllerRef.current = null;
       }
@@ -168,9 +167,7 @@ function Explore() {
 
   const visibleMovies = movies.slice(0, visibleCount);
 
-  const hasMore =
-    visibleCount < movies.length ||
-    currentPage < totalPages;
+  const hasMore = visibleCount < movies.length || currentPage < totalPages;
 
   return (
     <main className="explore">
@@ -187,23 +184,15 @@ function Explore() {
         <SearchForm onSearch={handleSearch} />
       </section>
 
-      <section
-        className="explore__results"
-        aria-live="polite"
-      >
+      <section className="explore__results" aria-live="polite">
         {isLoading ? (
           <Preloader />
         ) : error ? (
-          <p
-            className="explore__status"
-            role="alert"
-          >
+          <p className="explore__status" role="alert">
             {error}
           </p>
         ) : !searchQuery ? (
-          <p className="explore__status">
-            Pesquise um filme para começar.
-          </p>
+          <p className="explore__status">Pesquise um filme para começar.</p>
         ) : movies.length === 0 ? (
           <NothingFound />
         ) : (
@@ -217,13 +206,23 @@ function Explore() {
               hasMore={hasMore}
               isLoadingMore={isLoadingMore}
               onShowMore={handleShowMore}
+              favoriteIds={favoriteIds}
+              favoriteLoadingIds={
+                isFavoritesLoading
+                  ? visibleMovies.map((movie) => movie.id)
+                  : favoriteLoadingIds
+              }
+              onFavoriteClick={onFavoriteClick}
             />
 
+            {favoritesError && (
+              <p className="explore__status" role="alert">
+                {favoritesError}
+              </p>
+            )}
+
             {paginationError && (
-              <p
-                className="explore__status"
-                role="alert"
-              >
+              <p className="explore__status" role="alert">
                 {paginationError}
               </p>
             )}
