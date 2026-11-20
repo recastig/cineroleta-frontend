@@ -23,6 +23,12 @@ function Navigation({
         Sobre
       </NavLink>
 
+      {isLoggedIn && (
+        <NavLink to="/favorites" className="navigation__link">
+          Favoritos
+        </NavLink>
+      )}
+
       {!isSessionLoading && (
         <>
           {isLoggedIn ? (

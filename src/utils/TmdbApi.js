@@ -26,7 +26,11 @@ function normalizeMovie(movie) {
     description: movie.overview || "Sinopse não disponível.",
     rating: movie.vote_average,
     genreIds: movie.genre_ids || [],
-    posterUrl: movie.poster_path ? `${IMAGE_URL}${movie.poster_path}` : null,
+    posterUrl: movie.poster_path
+      ? `${IMAGE_URL}${movie.poster_path}`
+      : null,
+    posterPath: movie.poster_path || "",
+    releaseDate: movie.release_date || "",
   };
 }
 
