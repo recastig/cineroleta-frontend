@@ -16,7 +16,7 @@ Uma aplicação full-stack de descoberta cinematográfica que transforma a indec
 
 ![Demonstração da roleta e da experiência Cineroleta](public/demo/cineroleta-demo.gif)
 
-> **GIF em produção:** esta seção receberá uma demonstração curta da roleta e da navegação pelo projeto.
+> **GIF em produção:** demonstração curta da roleta e da navegação pelo projeto.
 
 ## Sobre o projeto
 
