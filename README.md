@@ -4,127 +4,178 @@
 
 ### Gire e assista, simples assim.
 
-**Uma experiência de descoberta cinematográfica que transforma a indecisão em diversão.**
+Uma aplicação full-stack de descoberta cinematográfica que transforma a indecisão em uma experiência interativa.
 
-[Sobre o projeto](#sobre-o-projeto) · [Funcionalidades](#funcionalidades) · [Tecnologias](#tecnologias) · [Como executar](#como-executar) · [Próximos passos](#próximos-passos)
+**[Acessar o Cineroleta](https://cineroleta-xi.vercel.app)** · **[API / Backend](https://github.com/recastig/cineroleta-backend)** · **[Explorar funcionalidades](#funcionalidades)** · **[Executar localmente](#como-executar-localmente)**
 
 </div>
 
 ---
 
+## Demonstração
+
+[Demonstração da roleta e da experiência Cineroleta](public/demo/cineroleta-demo.gif)
+
+> **GIF em produção:** esta seção receberá uma demonstração curta da roleta e da navegação pelo projeto.
+
 ## Sobre o projeto
 
-**Cineroleta** é uma aplicação web de descoberta de filmes que combina uma roleta interativa, filtros personalizados e uma interface de pesquisa integrada ao [The Movie Database (TMDB)](https://www.themoviedb.org/).
+O **Cineroleta** nasceu de uma situação cotidiana: passar mais tempo decidindo qual filme assistir do que aproveitando a sessão.
 
-A proposta nasceu de uma situação familiar: passar mais tempo decidindo o que assistir do que aproveitando o filme. Em vez de navegar indefinidamente por catálogos, a pessoa escolhe suas preferências, gira a roleta e recebe uma sugestão para a próxima sessão.
+Para simplificar essa escolha, a aplicação combina uma **roleta interativa**, **filtros personalizados** e **pesquisa de títulos** usando dados do [The Movie Database (TMDB)](https://www.themoviedb.org/). Depois de encontrar algo interessante, o usuário pode criar uma conta e salvar filmes em uma lista pessoal de favoritos.
 
-O projeto também explora uma direção visual inspirada em cartazes de cinema e no design editorial: tipografia expressiva, contrastes marcantes, formas retas, uma paleta bordô e creme e elementos gráficos que dão personalidade à experiência.
+O projeto foi desenvolvido como uma aplicação **full-stack**, com frontend em React, API REST própria em Node.js/Express e persistência de dados no MongoDB. A interface e o backend são publicados separadamente, na Vercel e no Render.
 
-> **Status:** frontend desenvolvido e em preparação para revisão e publicação. O backend será iniciado após a aprovação da etapa de frontend.
+Além do desenvolvimento, o Cineroleta tem uma direção de arte própria, inspirada em cartazes de cinema e no design editorial contemporâneo: tipografia expressiva, contrastes marcantes, paleta bordô e creme, detalhes em amarelo e componentes de cantos retos.
+
+**Status:** projeto concluído, aprovado e publicado.
 
 ## Funcionalidades
 
-### Implementadas no frontend
+### Descoberta de filmes
 
-- **Roleta cinematográfica interativa:** animação de sorteio e apresentação do filme selecionado, com título, ano, nota TMDB e sinopse.
-- **Filtros combináveis:** seleção de gênero, ano mínimo de lançamento e nota mínima de avaliação no TMDB.
-- **Descoberta de filmes via TMDB:** consulta de títulos com base nos filtros selecionados.
-- **Busca por filmes:** pesquisa por nome, com pôsteres, informações básicas e avaliações.
-- **Resultados progressivos:** exibição inicial de três filmes e carregamento de mais três a cada clique, com paginação da API quando necessário.
-- **Estados de interface:** indicador de carregamento, mensagens para pesquisas sem resultados e tratamento de falhas nas requisições.
-- **Navegação e conteúdo:** páginas inicial, Explorar e Sobre.
-- **Interfaces de acesso:** formulários de entrada e cadastro com validação básica e modais acessíveis por botões, tecla `Esc` e clique fora da janela.
-- **Layout responsivo:** adaptação da interface para desktop, tablet e dispositivos móveis.
+- **Roleta interativa:** sorteia uma sugestão e apresenta título, ano de lançamento, nota TMDB e sinopse.
+- **Filtros combináveis:** gênero, ano mínimo de lançamento e nota mínima de avaliação no TMDB.
+- **Busca por título:** pesquisa filmes pela API do TMDB, com pôsteres e informações relevantes.
+- **Resultados progressivos:** apresenta inicialmente três filmes, com carregamento de mais resultados e paginação quando necessário.
+- **Estados de interface:** indicadores de carregamento, mensagens para buscas sem resultados e tratamento de falhas nas requisições.
 
-**Importante:** os formulários de entrada e cadastro são, por enquanto, demonstrativos. O cadastro de usuários e a autenticação real dependem do backend.
+### Conta e favoritos
 
-### Como funciona a roleta
+- **Cadastro e login reais** integrados à API própria.
+- **Autenticação com JWT**, recuperação da sessão ao reabrir a aplicação e opção de logout.
+- **Página de favoritos protegida**, acessível apenas a usuários autenticados.
+- **Adicionar e remover favoritos** diretamente nos cards de filmes, com persistência no MongoDB.
+- **Lista individual de filmes salvos**, vinculada ao usuário autenticado.
 
-1. Selecione um gênero ou mantenha **Todos os gêneros**.
-2. Defina, se quiser, o **ano mínimo** e a **nota mínima no TMDB**.
-3. Gire a roleta para receber uma sugestão de filme que corresponda aos filtros.
-4. Não era bem o que procurava? Gire novamente.
+### Interface e navegação
 
-A roda possui segmentos visuais fixos, independentemente da quantidade de filmes elegíveis. O sorteio consulta uma página aleatória de resultados dentro do intervalo acessível pela API do TMDB; portanto, **não equivale a uma distribuição uniforme de todo o catálogo**.
+- Páginas **Início**, **Explorar**, **Sobre** e **Favoritos**.
+- Layout responsivo para desktop, tablet e celular.
+- Formulários em modais com validação HTML, fechamento por `Esc`, clique fora da janela e gerenciamento de foco.
+- Componentes reutilizáveis e estilos organizados pela convenção **BEM**.
+
+## Como funciona a roleta
+
+1. Escolha um gênero ou mantenha **Todos os gêneros**.
+2. Defina, se desejar, o **ano mínimo** e a **nota mínima no TMDB**.
+3. Gire a roleta para descobrir uma sugestão de filme correspondente aos filtros.
+4. Não gostou da sugestão? Gire novamente.
+
+**Nota técnica:** a roleta utiliza segmentos visuais fixos e consulta resultados elegíveis da API do TMDB. O mecanismo não representa uma amostragem uniformemente distribuída de todo o catálogo.
 
 ## Design e experiência
 
-A identidade do Cineroleta foi desenvolvida para trazer uma linguagem editorial e cinematográfica a uma experiência simples de descoberta.
+A identidade visual foi pensada para transformar uma funcionalidade simples em uma experiência de descoberta com personalidade.
 
-- **Direção de arte:** visual expressivo, contemporâneo e com referências ao universo do cinema.
-- **Paleta:** bordô profundo, creme, rosa suave e amarelo como cor de destaque.
-- **Tipografia:** títulos de grande impacto, hierarquia clara e textos de apoio objetivos.
-- **Interface:** componentes reutilizáveis, botões de cantos retos e estados de interação consistentes.
-- **Experiência:** uma jornada curta entre escolher preferências, sortear e descobrir um filme.
-
-<!-- Após o deploy, você pode adicionar aqui imagens reais da Home, da roleta e da página Explorar. -->
+- **Direção de arte:** referências ao universo do cinema e ao design editorial.
+- **Cores:** bordô profundo, creme, rosa suave e amarelo como ponto de destaque.
+- **Tipografia:** títulos de grande impacto visual e hierarquia clara.
+- **Componentes:** formas retas, estados de interação consistentes e layouts responsivos.
+- **Experiência:** fluxo curto entre pesquisar, filtrar, sortear e salvar filmes.
 
 ## Tecnologias
 
-| Tecnologia | Utilização |
-| --- | --- |
-| [React](https://react.dev/) | Construção da interface em componentes e gerenciamento de estado |
-| [Vite](https://vite.dev/) | Ambiente de desenvolvimento e build |
-| [JavaScript (ES6+)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript) | Lógica da aplicação e requisições assíncronas |
-| [React Router](https://reactrouter.com/) | Navegação entre páginas |
-| CSS3 | Estilização, Grid, Flexbox, animações e responsividade |
-| [TMDB API](https://developer.themoviedb.org/) | Pesquisa, descoberta e dados de filmes |
-| Fetch API | Comunicação com a API externa |
-| ESLint | Análise estática e padronização do código |
+| Camada | Tecnologias | Aplicação |
+| --- | --- | --- |
+| Frontend | React, Vite, JavaScript (ES6+) | Componentes, estados, interações e build |
+| Navegação | React Router | Rotas públicas e protegidas |
+| Estilização | CSS3, Grid, Flexbox, BEM | Identidade visual e responsividade |
+| Backend | Node.js, Express | API REST e regras de negócio |
+| Banco de dados | MongoDB Atlas, Mongoose | Usuários e filmes favoritos |
+| Autenticação | JWT, bcryptjs | Sessão autenticada e senhas com hash |
+| Validação e proteção | express-validator, Helmet, express-rate-limit | Validação de entradas e medidas de segurança |
+| Integração externa | TMDB API, Fetch API | Busca, descoberta de filmes e comunicação HTTP |
+| Qualidade | ESLint | Padronização e análise estática |
+| Deploy | Vercel, Render | Hospedagem do frontend e da API |
 
-A estrutura de estilos utiliza a convenção **BEM**, favorecendo a organização e a manutenção dos componentes.
+## Arquitetura
 
-## Como executar
+O projeto está dividido em **dois repositórios**:
+
+- **[cineroleta-frontend](https://github.com/recastig/cineroleta-frontend)** — interface React, integração com TMDB, autenticação e gerenciamento de favoritos.
+- **[cineroleta-backend](https://github.com/recastig/cineroleta-backend)** — API REST com Express, autenticação JWT, validação, tratamento de erros e persistência com MongoDB.
+
+Fluxo simplificado:
+
+```text
+Usuário
+   |
+   v
+Frontend React (Vercel)
+   |                  \
+   |                   +--> TMDB API (pesquisa e descoberta)
+   v
+API REST Node.js/Express (Render)
+   |
+   v
+MongoDB Atlas (usuários e favoritos)
+```
+
+### Endpoints principais da API
+
+| Método | Endpoint | Descrição | Autenticação |
+| --- | --- | --- | --- |
+| `POST` | `/api/signup` | Cadastrar usuário | Não |
+| `POST` | `/api/signin` | Autenticar usuário | Não |
+| `GET` | `/api/users/me` | Consultar perfil atual | Sim |
+| `GET` | `/api/movies` | Listar favoritos do usuário | Sim |
+| `POST` | `/api/movies` | Adicionar filme aos favoritos | Sim |
+| `DELETE` | `/api/movies/:movieId` | Remover um favorito | Sim |
+| `GET` | `/api/health` | Verificar disponibilidade da API | Não |
+
+As rotas privadas recebem o token no cabeçalho `Authorization: Bearer <token>`.
+
+**API publicada:** https://cineroleta-api.onrender.com/api
+
+## Como executar localmente
 
 ### Pré-requisitos
 
-- Node.js compatível com a versão do Vite declarada em `package.json`.
+- Node.js em versão compatível com o Vite definido em `package.json`.
 - npm.
-- Uma chave **API Key v3** do [TMDB](https://www.themoviedb.org/settings/api).
+- Uma [API Key v3 do TMDB](https://www.themoviedb.org/settings/api).
+- A API do backend acessível (publicada ou executada localmente).
 
-### Instalação
-
-Clone o repositório do frontend e entre na pasta do projeto:
+### 1. Clonar e instalar o frontend
 
 ```bash
 git clone https://github.com/recastig/cineroleta-frontend.git
 cd cineroleta-frontend
-```
-
-> Substitua a URL pelo endereço real do seu repositório. Caso a pasta clonada tenha outro nome, utilize esse nome no comando `cd`.
-
-Instale as dependências:
-
-```bash
 npm install
 ```
 
-Crie um arquivo `.env.local` na raiz, ao lado do `package.json`:
+### 2. Configurar as variáveis de ambiente
+
+Crie um arquivo `.env.local` na raiz do frontend, ao lado de `package.json`:
 
 ```dotenv
 VITE_TMDB_API_KEY=sua_chave_api_v3
+VITE_BACKEND_API_URL=https://cineroleta-api.onrender.com/api
 ```
 
-Inicie o servidor de desenvolvimento:
+Para desenvolvimento com o backend em execução local, utilize `VITE_BACKEND_API_URL=http://localhost:3000/api` em vez da URL publicada. Nesse cenário, inicie também a API e configure seu acesso ao MongoDB conforme as instruções do [repositório do backend](https://github.com/recastig/cineroleta-backend).
+
+### 3. Iniciar o frontend
 
 ```bash
 npm run dev
 ```
 
-Abra o endereço local informado no terminal, normalmente `http://localhost:5173`.
+Abra o endereço exibido pelo Vite no terminal, normalmente `http://localhost:5173`.
 
 ### Scripts disponíveis
 
-| Comando | Ação |
+| Comando | Descrição |
 | --- | --- |
-| `npm run dev` | Inicia o ambiente de desenvolvimento |
-| `npm run build` | Gera a versão de produção |
-| `npm run preview` | Visualiza localmente o build |
-| `npm run lint` | Executa a análise do ESLint |
+| `npm run dev` | Iniciar servidor de desenvolvimento |
+| `npm run build` | Gerar build de produção |
+| `npm run preview` | Visualizar o build localmente |
+| `npm run lint` | Executar o ESLint |
 
-> **Segurança:** não publique `.env.local` e não adicione credenciais ao repositório. Variáveis com prefixo `VITE_` são expostas no código entregue ao navegador; portanto, a chave usada no frontend não deve ser tratada como um segredo. A estratégia de acesso à API será reavaliada na integração com o backend.
+> **Variáveis e segurança:** não versione `.env.local` nem credenciais privadas. Variáveis com prefixo `VITE_` são incorporadas ao bundle do navegador e **não devem conter segredos**. O token de autenticação é utilizado para acessar rotas privadas da API.
 
-## Organização do projeto
+## Organização do frontend
 
 ```text
 src/
@@ -132,6 +183,7 @@ src/
 │   ├── About/
 │   ├── App/
 │   ├── Explore/
+│   ├── Favorites/
 │   ├── Footer/
 │   ├── Header/
 │   ├── Main/
@@ -141,51 +193,46 @@ src/
 │   ├── Navigation/
 │   ├── NothingFound/
 │   ├── Preloader/
+│   ├── ProtectedRoute/
 │   ├── Roulette/
 │   └── SearchForm/
+├── contexts/
+│   └── CurrentUserContext.js
 ├── utils/
+│   ├── AuthApi.js
+│   ├── MoviesApi.js
 │   └── TmdbApi.js
 └── main.jsx
 ```
 
-Cada componente concentra sua estrutura JSX e seus estilos, enquanto as funções de integração com o TMDB ficam separadas em `src/utils/TmdbApi.js`.
+Os componentes concentram a interface e os estilos. A comunicação com as APIs fica separada em módulos de `src/utils`, enquanto `CurrentUserContext` disponibiliza as informações do usuário autenticado aos componentes.
 
-## Próximos passos
+## Desafios e aprendizados
 
-O Cineroleta está sendo desenvolvido em etapas para validar a experiência do frontend antes da implementação dos serviços próprios.
+O desenvolvimento do Cineroleta envolveu tanto decisões de produto e interface quanto desafios de integração full-stack:
 
-### 1. Finalização e aprovação do frontend
+- **Conectar serviços distintos:** integrar um frontend na Vercel com uma API no Render, incluindo configuração de CORS e variáveis de ambiente por ambiente de deploy.
+- **Organizar a autenticação:** implementar cadastro, login, validação de JWT, persistência de sessão e proteção de rotas no React.
+- **Sincronizar dados externos e próprios:** utilizar o TMDB para consulta de filmes e o MongoDB para manter favoritos individuais.
+- **Tratar estados assíncronos:** lidar com carregamento, erros, paginação, requisições canceláveis e feedback durante ações nos favoritos.
+- **Unir design e desenvolvimento:** construir uma interface com identidade visual própria sem comprometer a legibilidade ou a adaptação entre tamanhos de tela.
 
-- [ ] Auditar requisitos funcionais e de responsividade.
-- [ ] Validar acessibilidade, estados de erro e interações dos modais.
-- [ ] Executar os testes finais de lint e build.
-- [ ] Publicar o frontend e configurar a variável de ambiente no serviço de hospedagem.
-- [ ] Enviar a Pull Request de `stage-react-api` para `main` para revisão e aprovação.
+## Evoluções futuras
 
-### 2. Backend e recursos de conta — após a aprovação
+O projeto está funcional e concluído em seu escopo atual. Algumas ideias para futuras versões são:
 
-- [ ] Criar API própria com **Node.js e Express**.
-- [ ] Integrar banco de dados para usuários e informações persistentes.
-- [ ] Implementar cadastro, login e autenticação real com JWT.
-- [ ] Criar uma área de filmes favoritos vinculada ao usuário.
-- [ ] Conectar frontend e backend e validar fluxos completos.
-- [ ] Publicar a aplicação full-stack e revisar segurança e tratamento de erros.
-
-### 3. Melhorias futuras
-
-- [ ] Aprimorar a experiência de descoberta e as informações dos filmes.
-- [ ] Expandir opções de personalização da roleta.
-- [ ] Refinar acessibilidade, desempenho e experiência em dispositivos móveis.
-
-Esses itens representam o planejamento do projeto, não funcionalidades já entregues.
+- [ ] Ampliar as opções de personalização da roleta.
+- [ ] Enriquecer a apresentação e os detalhes dos filmes.
+- [ ] Aprofundar testes automatizados, acessibilidade e desempenho.
+- [ ] Explorar novas formas de organizar e compartilhar listas pessoais.
 
 ## Créditos e atribuição
 
-Dados de filmes disponibilizados por **[The Movie Database (TMDB)](https://www.themoviedb.org/)**.
+Os dados cinematográficos são fornecidos pelo **[The Movie Database (TMDB)](https://www.themoviedb.org/)**.
 
 > Este produto utiliza a API do TMDB, mas não é endossado nem certificado pelo TMDB.
 
-O Cineroleta é um projeto de estudo e portfólio, com foco em desenvolvimento frontend, integração de APIs, interface e experiência do usuário.
+O Cineroleta é um projeto de estudo e portfólio que reúne desenvolvimento full-stack, integração de APIs, interface e experiência do usuário.
 
 ---
 
