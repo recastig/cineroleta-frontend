@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🎬 CINEROLETA.
+# CINEROLETA.
 
 ### Gire e assista, simples assim.
 
@@ -15,17 +15,17 @@
 ![JWT](https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white)
 ![Status](https://img.shields.io/badge/Status-Concluído-2ea44f?style=flat)
 
-[**🌐 Acessar aplicação**](https://cineroleta-xi.vercel.app/) · [**⚙️ Repositório backend**](https://github.com/recastig/cineroleta-backend) · [**🎲 Funcionalidades**](#-funcionalidades)
+[**Acessar aplicação**](https://cineroleta-xi.vercel.app/) · [**Repositório backend**](https://github.com/recastig/cineroleta-backend) · [**Funcionalidades**](#-funcionalidades)
 
 </div>
 
 ---
 
-## 🎞️ Demonstração
+## Demonstração
 
 ![Demonstração da roleta e da experiência Cineroleta](public/demo/cineroleta-demo.gif)
 
-## 📋 Sumário
+## Sumário
 
 - [Sobre o projeto](#-sobre-o-projeto)
 - [Funcionalidades](#-funcionalidades)
@@ -40,7 +40,7 @@
 
 ---
 
-## 📖 Sobre o projeto
+## Sobre o projeto
 
 O **Cineroleta** nasceu de uma situação cotidiana: passar mais tempo decidindo qual filme assistir do que aproveitando a sessão.
 
@@ -52,7 +52,7 @@ Além do desenvolvimento, o Cineroleta tem uma direção de arte própria, inspi
 
 **Status:** projeto concluído, aprovado e publicado.
 
-## 🚀 Funcionalidades
+## Funcionalidades
 
 ### Descoberta de filmes
 
@@ -88,7 +88,7 @@ Além do desenvolvimento, o Cineroleta tem uma direção de arte própria, inspi
 
 - Componentes reutilizáveis e estilos organizados pela convenção **BEM**.
 
-## 🎲 Como funciona a roleta
+## Como funciona a roleta
 
 1. Escolha um gênero ou mantenha **Todos os gêneros**.
 
@@ -100,7 +100,7 @@ Além do desenvolvimento, o Cineroleta tem uma direção de arte própria, inspi
 
 **Nota técnica:** a roleta utiliza segmentos visuais fixos e consulta resultados elegíveis da API do TMDB. O mecanismo não representa uma amostragem uniformemente distribuída de todo o catálogo.
 
-## 🎨 Design e experiência
+## Design e experiência
 
 A identidade visual foi pensada para transformar uma funcionalidade simples em uma experiência de descoberta com personalidade.
 
@@ -114,7 +114,7 @@ A identidade visual foi pensada para transformar uma funcionalidade simples em u
 
 - **Experiência:** fluxo curto entre pesquisar, filtrar, sortear e salvar filmes.
 
-## 🛠️ Tecnologias
+## Tecnologias
 
 | Camada | Tecnologias | Aplicação |
 | --- | --- | --- |
@@ -129,7 +129,7 @@ A identidade visual foi pensada para transformar uma funcionalidade simples em u
 | Qualidade | ESLint | Padronização e análise estática |
 | Deploy | Vercel, Render | Hospedagem do frontend e da API |
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 O projeto está dividido em **dois repositórios**:
 
@@ -169,7 +169,7 @@ As rotas privadas recebem o token no cabeçalho `Authorization: Bearer <token>`.
 
 **API publicada:** https://cineroleta-api.onrender.com/api
 
-## 📦 Como executar localmente
+## Como executar localmente
 
 ### Pré-requisitos
 
@@ -219,7 +219,7 @@ Abra o endereço exibido pelo Vite no terminal, normalmente `http://localhost:51
 
 > **Variáveis e segurança:** não versione `.env.local` nem credenciais privadas. Variáveis com prefixo `VITE_` são incorporadas ao bundle do navegador e **não devem conter segredos**. O token de autenticação é utilizado para acessar rotas privadas da API.
 
-## 📁 Organização do frontend
+## Organização do frontend
 
 ```text
 src/
@@ -251,7 +251,7 @@ src/
 
 Os componentes concentram a interface e os estilos. A comunicação com as APIs fica separada em módulos de `src/utils`, enquanto `CurrentUserContext` disponibiliza as informações do usuário autenticado aos componentes.
 
-## 📚 Desafios e aprendizados
+## Desafios e aprendizados
 
 O desenvolvimento do Cineroleta envolveu tanto decisões de produto e interface quanto desafios de integração full-stack:
 
@@ -265,7 +265,7 @@ O desenvolvimento do Cineroleta envolveu tanto decisões de produto e interface 
 
 - **Unir design e desenvolvimento:** construir uma interface com identidade visual própria sem comprometer a legibilidade ou a adaptação entre tamanhos de tela.
 
-## 🎯 Evoluções futuras
+## Evoluções futuras
 
 O projeto está funcional e concluído em seu escopo atual. Algumas ideias para futuras versões são:
 
@@ -277,7 +277,7 @@ O projeto está funcional e concluído em seu escopo atual. Algumas ideias para 
 
 - [ ] Explorar novas formas de organizar e compartilhar listas pessoais.
 
-## 📄 Créditos e atribuição
+## Créditos e atribuição
 
 Os dados cinematográficos são fornecidos pelo **[The Movie Database (TMDB)](https://www.themoviedb.org/)**.
 
