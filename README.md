@@ -1,22 +1,46 @@
 <div align="center">
 
-# CINEROLETA. 🎬
+# 🎬 CINEROLETA.
 
 ### Gire e assista, simples assim.
 
-Uma aplicação full-stack de descoberta cinematográfica que transforma a indecisão em uma experiência interativa.
+**Uma aplicação full-stack de descoberta de filmes com roleta interativa, busca e favoritos.**
 
-**[Acessar o Cineroleta](https://cineroleta-xi.vercel.app)** · **[API / Backend](https://github.com/recastig/cineroleta-backend)** · **[Explorar funcionalidades](#funcionalidades)** · **[Executar localmente](#como-executar-localmente)**
+![React](https://img.shields.io/badge/React-149ECA?style=flat&logo=react&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=flat&logo=vite&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=flat&logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Concluído-2ea44f?style=flat)
+
+[**🌐 Acessar aplicação**](https://cineroleta-xi.vercel.app/) · [**⚙️ Repositório backend**](https://github.com/recastig/cineroleta-backend) · [**🎲 Funcionalidades**](#-funcionalidades)
 
 </div>
 
 ---
 
-## Demonstração
+## 🎞️ Demonstração
 
 ![Demonstração da roleta e da experiência Cineroleta](public/demo/cineroleta-demo.gif)
 
-## Sobre o projeto
+## 📋 Sumário
+
+- [Sobre o projeto](#-sobre-o-projeto)
+- [Funcionalidades](#-funcionalidades)
+- [Como funciona a roleta](#-como-funciona-a-roleta)
+- [Design e experiência](#-design-e-experiência)
+- [Tecnologias](#-tecnologias)
+- [Arquitetura](#-arquitetura)
+- [Como executar localmente](#-como-executar-localmente)
+- [Organização do frontend](#-organização-do-frontend)
+- [Desafios e aprendizados](#-desafios-e-aprendizados)
+- [Evoluções futuras](#-evoluções-futuras)
+
+---
+
+## 📖 Sobre o projeto
 
 O **Cineroleta** nasceu de uma situação cotidiana: passar mais tempo decidindo qual filme assistir do que aproveitando a sessão.
 
@@ -28,51 +52,69 @@ Além do desenvolvimento, o Cineroleta tem uma direção de arte própria, inspi
 
 **Status:** projeto concluído, aprovado e publicado.
 
-## Funcionalidades
+## 🚀 Funcionalidades
 
 ### Descoberta de filmes
 
 - **Roleta interativa:** sorteia uma sugestão e apresenta título, ano de lançamento, nota TMDB e sinopse.
+
 - **Filtros combináveis:** gênero, ano mínimo de lançamento e nota mínima de avaliação no TMDB.
+
 - **Busca por título:** pesquisa filmes pela API do TMDB, com pôsteres e informações relevantes.
+
 - **Resultados progressivos:** apresenta inicialmente três filmes, com carregamento de mais resultados e paginação quando necessário.
+
 - **Estados de interface:** indicadores de carregamento, mensagens para buscas sem resultados e tratamento de falhas nas requisições.
 
 ### Conta e favoritos
 
 - **Cadastro e login reais** integrados à API própria.
+
 - **Autenticação com JWT**, recuperação da sessão ao reabrir a aplicação e opção de logout.
+
 - **Página de favoritos protegida**, acessível apenas a usuários autenticados.
+
 - **Adicionar e remover favoritos** diretamente nos cards de filmes, com persistência no MongoDB.
+
 - **Lista individual de filmes salvos**, vinculada ao usuário autenticado.
 
 ### Interface e navegação
 
 - Páginas **Início**, **Explorar**, **Sobre** e **Favoritos**.
+
 - Layout responsivo para desktop, tablet e celular.
+
 - Formulários em modais com validação HTML, fechamento por `Esc`, clique fora da janela e gerenciamento de foco.
+
 - Componentes reutilizáveis e estilos organizados pela convenção **BEM**.
 
-## Como funciona a roleta
+## 🎲 Como funciona a roleta
 
 1. Escolha um gênero ou mantenha **Todos os gêneros**.
+
 2. Defina, se desejar, o **ano mínimo** e a **nota mínima no TMDB**.
+
 3. Gire a roleta para descobrir uma sugestão de filme correspondente aos filtros.
+
 4. Não gostou da sugestão? Gire novamente.
 
 **Nota técnica:** a roleta utiliza segmentos visuais fixos e consulta resultados elegíveis da API do TMDB. O mecanismo não representa uma amostragem uniformemente distribuída de todo o catálogo.
 
-## Design e experiência
+## 🎨 Design e experiência
 
 A identidade visual foi pensada para transformar uma funcionalidade simples em uma experiência de descoberta com personalidade.
 
 - **Direção de arte:** referências ao universo do cinema e ao design editorial.
+
 - **Cores:** bordô profundo, creme, rosa suave e amarelo como ponto de destaque.
+
 - **Tipografia:** títulos de grande impacto visual e hierarquia clara.
+
 - **Componentes:** formas retas, estados de interação consistentes e layouts responsivos.
+
 - **Experiência:** fluxo curto entre pesquisar, filtrar, sortear e salvar filmes.
 
-## Tecnologias
+## 🛠️ Tecnologias
 
 | Camada | Tecnologias | Aplicação |
 | --- | --- | --- |
@@ -87,11 +129,12 @@ A identidade visual foi pensada para transformar uma funcionalidade simples em u
 | Qualidade | ESLint | Padronização e análise estática |
 | Deploy | Vercel, Render | Hospedagem do frontend e da API |
 
-## Arquitetura
+## 🏗️ Arquitetura
 
 O projeto está dividido em **dois repositórios**:
 
 - **[cineroleta-frontend](https://github.com/recastig/cineroleta-frontend)** — interface React, integração com TMDB, autenticação e gerenciamento de favoritos.
+
 - **[cineroleta-backend](https://github.com/recastig/cineroleta-backend)** — API REST com Express, autenticação JWT, validação, tratamento de erros e persistência com MongoDB.
 
 Fluxo simplificado:
@@ -126,13 +169,16 @@ As rotas privadas recebem o token no cabeçalho `Authorization: Bearer <token>`.
 
 **API publicada:** https://cineroleta-api.onrender.com/api
 
-## Como executar localmente
+## 📦 Como executar localmente
 
 ### Pré-requisitos
 
 - Node.js em versão compatível com o Vite definido em `package.json`.
+
 - npm.
+
 - Uma [API Key v3 do TMDB](https://www.themoviedb.org/settings/api).
+
 - A API do backend acessível (publicada ou executada localmente).
 
 ### 1. Clonar e instalar o frontend
@@ -173,7 +219,7 @@ Abra o endereço exibido pelo Vite no terminal, normalmente `http://localhost:51
 
 > **Variáveis e segurança:** não versione `.env.local` nem credenciais privadas. Variáveis com prefixo `VITE_` são incorporadas ao bundle do navegador e **não devem conter segredos**. O token de autenticação é utilizado para acessar rotas privadas da API.
 
-## Organização do frontend
+## 📁 Organização do frontend
 
 ```text
 src/
@@ -205,26 +251,33 @@ src/
 
 Os componentes concentram a interface e os estilos. A comunicação com as APIs fica separada em módulos de `src/utils`, enquanto `CurrentUserContext` disponibiliza as informações do usuário autenticado aos componentes.
 
-## Desafios e aprendizados
+## 📚 Desafios e aprendizados
 
 O desenvolvimento do Cineroleta envolveu tanto decisões de produto e interface quanto desafios de integração full-stack:
 
 - **Conectar serviços distintos:** integrar um frontend na Vercel com uma API no Render, incluindo configuração de CORS e variáveis de ambiente por ambiente de deploy.
+
 - **Organizar a autenticação:** implementar cadastro, login, validação de JWT, persistência de sessão e proteção de rotas no React.
+
 - **Sincronizar dados externos e próprios:** utilizar o TMDB para consulta de filmes e o MongoDB para manter favoritos individuais.
+
 - **Tratar estados assíncronos:** lidar com carregamento, erros, paginação, requisições canceláveis e feedback durante ações nos favoritos.
+
 - **Unir design e desenvolvimento:** construir uma interface com identidade visual própria sem comprometer a legibilidade ou a adaptação entre tamanhos de tela.
 
-## Evoluções futuras
+## 🎯 Evoluções futuras
 
 O projeto está funcional e concluído em seu escopo atual. Algumas ideias para futuras versões são:
 
 - [ ] Ampliar as opções de personalização da roleta.
+
 - [ ] Enriquecer a apresentação e os detalhes dos filmes.
+
 - [ ] Aprofundar testes automatizados, acessibilidade e desempenho.
+
 - [ ] Explorar novas formas de organizar e compartilhar listas pessoais.
 
-## Créditos e atribuição
+## 📄 Créditos e atribuição
 
 Os dados cinematográficos são fornecidos pelo **[The Movie Database (TMDB)](https://www.themoviedb.org/)**.
 
@@ -236,7 +289,8 @@ O Cineroleta é um projeto de estudo e portfólio que reúne desenvolvimento ful
 
 <div align="center">
 
-**CINEROLETA.**  
-*Gire e assista, simples assim.*
+**CINEROLETA.**
+
+**Gire e assista, simples assim.**
 
 </div>
